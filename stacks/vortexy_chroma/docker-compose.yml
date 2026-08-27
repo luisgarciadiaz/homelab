@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  chroma:
+    image: chromadb/chroma:latest
+    container_name: vortexy_chroma
+    restart: unless-stopped
+    ports:
+      - "9001:8000"
+    volumes:
+      - chroma_data:/chroma/.chroma
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_PORT=8000
+      - CHROMA_PERSIST_DIRECTORY=/chroma/.chroma
+      - ALLOW_RESET=TRUE
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+volumes:
+  chroma_data:
+    driver: local

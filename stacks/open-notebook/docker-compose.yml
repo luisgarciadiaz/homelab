@@ -1,0 +1,69 @@
+name: open-notebook
+services:
+  surrealdb:
+    image: surrealdb/surrealdb:v2
+    container_name: open-notebook-surrealdb
+    command: start --log info --user root --pass ${SURREAL_PASSWORD} rocksdb:/mydata/mydatabase.db
+    user: root
+    restart: no
+    labels:
+      com.centurylinklabs.watchtower.enable: "false"
+    networks:
+    - infra-net
+    volumes:
+    - surreal_data:/mydata
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+    logging: &id001
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+  open_notebook:
+    image: lfnovo/open_notebook:v1-latest
+    container_name: open-notebook
+    restart: no
+    labels:
+      com.centurylinklabs.watchtower.enable: "false"
+    networks:
+    - infra-net
+    ports:
+    - 8502:8502
+    - 5055:5055
+    environment:
+    - OPEN_NOTEBOOK_ENCRYPTION_KEY=${OPEN_NOTEBOOK_ENCRYPTION_KEY}
+    - SURREAL_URL=ws://surrealdb:8000/rpc
+    - SURREAL_USER=root
+    - SURREAL_PASSWORD=${SURREAL_PASSWORD}
+    - SURREAL_NAMESPACE=open_notebook
+    - SURREAL_DATABASE=open_notebook
+    - OLLAMA_BASE_URL=http://192.168.0.0:11434
+    - API_URL=http://192.168.0.0:5055
+    - TZ=America/Mexico_City
+    volumes:
+    - notebook_data:/app/data
+    depends_on:
+    - surrealdb
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging: *id001
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:8502/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+volumes:
+  surreal_data: null
+  notebook_data: null
+networks:
+  infra-net:
+    external: true

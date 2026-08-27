@@ -1,0 +1,58 @@
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.44.0
+    container_name: hoarder-meilisearch
+    restart: unless-stopped
+    networks:
+    - infra-net
+    volumes:
+    - <host-path>
+    environment:
+    - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
+    - MEILI_NO_ANALYTICS=true
+    - MEILI_HTTP_ADDR=0.0.0.0:7700
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging: &id001
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+  hoarder:
+    image: ghcr.io/hoarder-app/hoarder:latest
+    container_name: hoarder-app
+    restart: unless-stopped
+    depends_on:
+    - meilisearch
+    networks:
+    - infra-net
+    ports:
+    - 3006:3000
+    environment:
+    - DATABASE_URL=postgresql://hoarder_user:${HOARDER_DB_PASSWORD}@general-db:5432/hoarder
+    - MEILI_ADDR=http://hoarder-meilisearch:7700
+    - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
+    - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    - NEXTAUTH_URL=http://192.168.0.0:3006
+    - NEXTAUTH_URL_INTERNAL=http://localhost:3000
+    - PORT=3000
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging: *id001
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+networks:
+  infra-net:
+    external: true

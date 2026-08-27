@@ -1,0 +1,65 @@
+services:
+  mariadb:
+    image: mariadb@sha256:628f228f0fd5913a220438693576b29b6fe4dc1fa0a1298c0e98579fae28635f
+    container_name: mariadb
+    restart: unless-stopped
+    networks:
+    - infra-net
+    - mariadb-net
+    ports:
+    - 127.0.0.1:3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: default
+    volumes:
+    - mariadb-data:/var/lib/mysql
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+    logging: &id001
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - mysqladmin ping -u root --silent || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    networks:
+    - mariadb-net
+    ports:
+    - 127.0.0.1:3307:80
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 100M
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging: *id001
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:3307/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+volumes:
+  mariadb-data: null
+networks:
+  infra-net:
+    external: true
+  mariadb-net: null

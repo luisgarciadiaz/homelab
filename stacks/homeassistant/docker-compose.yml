@@ -1,0 +1,32 @@
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    restart: unless-stopped
+    networks:
+    - infra-net
+    ports:
+    - 8123:8123
+    volumes:
+    - <host-path>
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:8123/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+networks:
+  infra-net:
+    external: true

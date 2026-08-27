@@ -1,0 +1,62 @@
+services:
+  opencode-telegram:
+    image: node:20-bookworm
+    container_name: opencode-telegram
+    restart: unless-stopped
+    networks:
+    - infra-net
+    environment:
+    - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+    - TELEGRAM_ALLOWED_USER_ID=${TELEGRAM_ALLOWED_USER_ID}
+    - OPENCODE_API_URL=http://opencode:4096
+    - OPENCODE_SERVER_USERNAME=opencode
+    - OPENCODE_SERVER_PASSWORD=${OPENCODE_SERVER_PASSWORD}
+    - OPENCODE_MODEL_PROVIDER=opencode
+    - OPENCODE_MODEL_ID=big-pickle
+    - BOT_LOCALE=en
+    - LOG_LEVEL=info
+    working_dir: /app
+    command: 'sh -c "
+
+      apt-get update -qq && apt-get install -y -qq python3 make g++
+
+      npm install -g @grinev/opencode-telegram-bot@latest
+
+      mkdir -p /root/.config/opencode-telegram-bot
+
+      echo ''TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}'' > /root/.config/opencode-telegram-bot/.env
+
+      echo ''TELEGRAM_ALLOWED_USER_ID=${TELEGRAM_ALLOWED_USER_ID}'' >> /root/.config/opencode-telegram-bot/.env
+
+      echo ''OPENCODE_API_URL=http://opencode:4096'' >> /root/.config/opencode-telegram-bot/.env
+
+      echo ''OPENCODE_SERVER_USERNAME=opencode'' >> /root/.config/opencode-telegram-bot/.env
+
+      echo ''OPENCODE_SERVER_PASSWORD=${OPENCODE_SERVER_PASSWORD}'' >> /root/.config/opencode-telegram-bot/.env
+
+      echo ''OPENCODE_MODEL_PROVIDER=opencode'' >> /root/.config/opencode-telegram-bot/.env
+
+      echo ''OPENCODE_MODEL_ID=big-pickle'' >> /root/.config/opencode-telegram-bot/.env
+
+      echo ''BOT_LOCALE=en'' >> /root/.config/opencode-telegram-bot/.env
+
+      echo ''LOG_LEVEL=info'' >> /root/.config/opencode-telegram-bot/.env
+
+      opencode-telegram start
+
+      "
+
+      '
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+networks:
+  infra-net:
+    external: true

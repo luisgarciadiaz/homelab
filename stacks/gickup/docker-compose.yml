@@ -1,0 +1,26 @@
+services:
+  gickup:
+    image: buddyspencer/gickup:latest
+    container_name: gickup
+    command: /config/conf.yml
+    restart: unless-stopped
+    environment:
+    - TZ=America/Mexico_City
+    volumes:
+    - gickup_config2:/config:z
+    - gickup_data:/backup:z
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+volumes:
+  gickup_config2:
+    external: true
+  gickup_data:
+    external: true

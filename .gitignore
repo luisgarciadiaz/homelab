@@ -1,14 +1,12 @@
-a/Documents\homelab-public\.gitignore → b/Documents\homelab-public\.gitignore
-@@ -0,0 +1,12 @@
-+# Never commit real secrets or host-specific data
-+*.env
-+.env
-+*.env.*
-+secrets*
-+*secret*
-+docker-compose.override.yml
-+*_EXCLUDED*
-+**/logs/
-+**/*.log
-+*passphrase*
-+*smb-credentials*
+# Never commit real secrets or host-specific data
+*.env
+.env
+*.env.*
+secrets*
+*secret*
+docker-compose.override.yml
+*_EXCLUDED*
+**/logs/
+**/*.log
+*passphrase*
+*smb-credentials*

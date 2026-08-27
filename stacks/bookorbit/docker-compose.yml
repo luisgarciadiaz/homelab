@@ -1,0 +1,66 @@
+name: bookorbit
+services:
+  app:
+    container_name: bookorbit-app
+    image: ghcr.io/bookorbit/bookorbit:latest
+    restart: unless-stopped
+    init: true
+    ports:
+    - 3008:3000
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      POSTGRES_HOST: general-db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: bookorbit
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: bookorbit
+      JWT_SECRET: ${JWT_SECRET}
+      SETUP_BOOTSTRAP_TOKEN: ${SETUP_BOOTSTRAP_TOKEN}
+      APP_URL: http://192.168.0.0:3008
+      CLIENT_URL: http://192.168.0.0:3008
+      PUID: 1000
+      PGID: 1000
+      NODE_MAX_OLD_SPACE_SIZE: 2048
+    networks:
+    - infra-net
+    volumes:
+    - <host-path>
+    - bookorbit_data:/data
+    read_only: true
+    tmpfs:
+    - /tmp
+    cap_drop:
+    - ALL
+    cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - SETGID
+    - SETUID
+    security_opt:
+    - no-new-privileges:true
+    stop_grace_period: 30s
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - node -e "fetch('http://127.0.0.1:3000/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+volumes:
+  bookorbit_data: null
+networks:
+  infra-net:
+    external: true

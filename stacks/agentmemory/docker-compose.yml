@@ -1,0 +1,36 @@
+services:
+  agentmemory:
+    image: agentmemory:latest
+    container_name: agentmemory
+    restart: unless-stopped
+    networks:
+    - infra-net
+    ports:
+    - 3111:3111
+    volumes:
+    - agentmemory_data:/data
+    environment:
+    - TZ=America/Mexico_City
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - node -e "require('http').get('http://localhost:3111/',(r)=>process.exit(r.statusCode<500?0:1)).on('error',()=>process.exit(1))"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+volumes:
+  agentmemory_data: null
+networks:
+  infra-net:
+    external: true

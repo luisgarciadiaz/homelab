@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    restart: unless-stopped
+    hostname: homelab
+    environment:
+    - TS_STATE_DIR=/var/lib/tailscale
+    - TS_HOSTNAME=${TAILSCALE_HOSTNAME:-homelab}
+    - TS_AUTH_ONCE=true
+    volumes:
+    - <host-path>
+    - /dev/net/tun:/dev/net/tun
+    cap_add:
+    - NET_ADMIN
+    - SYS_MODULE
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'

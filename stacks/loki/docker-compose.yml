@@ -1,0 +1,53 @@
+services:
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    restart: unless-stopped
+    networks:
+    - infra-net
+    ports:
+    - 3100:3100
+    volumes:
+    - <host-path>
+    - <host-path>
+    command:
+    - -config.file=/etc/loki/loki-config.yaml
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+    logging: &id001
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:3100/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    restart: unless-stopped
+    depends_on:
+    - loki
+    networks:
+    - infra-net
+    volumes:
+    - <host-path>
+    - <host-path>
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+    logging: *id001
+networks:
+  infra-net:
+    external: true

@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  n8n:
+    image: n8nio/n8n:2.20.6
+    container_name: n8n-app
+    restart: no
+    labels:
+      com.centurylinklabs.watchtower.enable: "false"
+    ports:
+    - 5678:5678
+    environment:
+    - DB_TYPE=postgresdb
+    - DB_POSTGRESDB_HOST=general-db
+    - DB_POSTGRESDB_PORT=5432
+    - DB_POSTGRESDB_DATABASE=n8n_data
+    - DB_POSTGRESDB_USER=n8n_user
+    - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD}
+    - N8N_HOST=n8n.example.com
+    - N8N_PORT=5678
+    - N8N_PROTOCOL=https
+    - N8N_SECURE_COOKIE=false
+    - N8N_METRICS=true
+    - N8N_METRICS_INCLUDE_DEFAULT_METRICS=true
+    - NODE_ENV=production
+    - WEBHOOK_URL=https://n8n.example.com/
+    volumes:
+    - <host-path>
+    networks:
+    - infra-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:5678/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+networks:
+  infra-net:
+    external: true

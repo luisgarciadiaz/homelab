@@ -1,0 +1,42 @@
+name: webdav
+services:
+  webdav:
+    image: bytemark/webdav:latest
+    container_name: webdav
+    restart: unless-stopped
+    command: sh -c "chown -R 82:100 /var/lib/dav/data && chmod -R g+w /var/lib/dav/data
+      && chmod g+s /var/lib/dav/data && umask 0002 && exec httpd-foreground"
+    ports:
+    - 8085:80
+    environment:
+      AUTH_TYPE: Digest
+      USERNAME: luis
+      PASSWORD: ${PASSWORD}
+      LOCATION: /
+      REALM: WebDAV
+      SERVER_NAMES: 192.168.0.0
+    volumes:
+    - <host-path>
+    networks:
+    - infra-net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:8085/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+networks:
+  infra-net:
+    external: true

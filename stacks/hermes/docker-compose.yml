@@ -1,0 +1,48 @@
+services:
+  hermes:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes
+    restart: unless-stopped
+    networks:
+    - infra-net
+    ports:
+    - 9119:9119
+    volumes:
+    - /root/.hermes:/opt/data
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - <host-path>
+    - <host-path>
+    - <host-path>
+    - /root/.hermes/init-addgroup.sh:/etc/cont-init.d/00-add-hermes-group:ro
+    environment:
+    - HERMES_UID=0
+    - HERMES_GID=0
+    - HERMES_DASHBOARD=true
+    - HERMES_DASHBOARD_INSECURE=true
+    - TZ=America/Mexico_City
+    group_add:
+    - '100'
+    command:
+    - gateway
+    - run
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - curl --fail --silent --output /dev/null http://localhost:9119/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+networks:
+  infra-net:
+    external: true

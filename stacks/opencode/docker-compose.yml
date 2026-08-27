@@ -1,0 +1,42 @@
+services:
+  opencode:
+    image: ghcr.io/anomalyco/opencode:latest
+    container_name: opencode
+    restart: unless-stopped
+    networks:
+    - infra-net
+    - monitoring_default
+    ports:
+    - 3003:4096
+    volumes:
+    - <host-path>
+    environment:
+    - OPENCODE_SERVER_PASSWORD=${OPENCODE_SERVER_PASSWORD}
+    - OPENCODE_API_KEY=${OPENCODE_API_KEY}
+    command:
+    - serve
+    - --hostname
+    - 0.0.0.0
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:4096/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+networks:
+  infra-net:
+    external: true
+  monitoring_default:
+    external: true

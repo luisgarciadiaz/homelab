@@ -1,0 +1,310 @@
+[
+  {
+    "Name": "n8n",
+    "Id": 1,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "nginx-proxy-manager",
+    "Id": 7,
+    "Status": 4,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "postgrest",
+    "Id": 22,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "adguard",
+    "Id": 26,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "rustdesk",
+    "Id": 27,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "tailscale",
+    "Id": 28,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "jellyfin",
+    "Id": 31,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "general-db",
+    "Id": 46,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "media-management",
+    "Id": 49,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "monitoring",
+    "Id": 62,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "opencode",
+    "Id": 63,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "sonarqube",
+    "Id": 64,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "loki",
+    "Id": 65,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "homeassistant",
+    "Id": 67,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "homebox",
+    "Id": 68,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "metube",
+    "Id": 69,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "myspeed",
+    "Id": 70,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "semaphore",
+    "Id": 71,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "slskd",
+    "Id": 72,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "woodpecker",
+    "Id": 73,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "hoarder",
+    "Id": 74,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "homepage",
+    "Id": 75,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "watchtower",
+    "Id": 77,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "exporters",
+    "Id": 78,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "mariadb",
+    "Id": 79,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "mongodb",
+    "Id": 80,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "redis",
+    "Id": 81,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "gickup",
+    "Id": 83,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "bookorbit",
+    "Id": 86,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "hermes",
+    "Id": 87,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "olivetin",
+    "Id": 88,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "webdav",
+    "Id": 90,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "opencode-telegram",
+    "Id": 91,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "nextcloud-aio",
+    "Id": 92,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "vaultwarden",
+    "Id": 94,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "agentmemory",
+    "Id": 96,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "open-notebook",
+    "Id": 97,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "backup",
+    "Id": 98,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "grampsweb",
+    "Id": 101,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "litellm-proxy",
+    "Id": 102,
+    "Status": 2,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "crowdsec",
+    "Id": 105,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "mcp-bridge",
+    "Id": 106,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "dockge",
+    "Id": 107,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  },
+  {
+    "Name": "vortexy_chroma",
+    "Id": 110,
+    "Status": 1,
+    "Type": 2,
+    "EndpointId": 3
+  }
+]

@@ -1,0 +1,39 @@
+services:
+  slskd:
+    image: slskd/slskd:latest
+    container_name: slskd
+    restart: unless-stopped
+    networks:
+    - infra-net
+    ports:
+    - 5030:5030
+    - 5031:5031
+    - 50300:50300
+    volumes:
+    - <host-path>
+    environment:
+    - SLSKD_REMOTE_CONFIGURATION=true
+    - SLSKD_HTTP_PORT=5030
+    - SLSKD_HTTPS_PORT=5031
+    - SLSKD_SLSK_LISTEN_PORT=50300
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:5030/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+networks:
+  infra-net:
+    external: true

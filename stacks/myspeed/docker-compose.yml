@@ -1,0 +1,32 @@
+services:
+  myspeed:
+    image: germannewsmaker/myspeed:latest
+    container_name: myspeed
+    restart: unless-stopped
+    networks:
+    - infra-net
+    ports:
+    - 5216:5216
+    volumes:
+    - <host-path>
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:5216/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+networks:
+  infra-net:
+    external: true

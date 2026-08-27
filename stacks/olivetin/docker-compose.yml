@@ -1,0 +1,36 @@
+services:
+  olivetin:
+    image: jamesread/olivetin:latest-3k
+    container_name: olivetin
+    group_add: [982]
+    restart: unless-stopped
+    networks:
+    - infra-net
+    ports:
+    - 1337:1337
+    volumes:
+    - <host-path>
+    - /var/run/docker.sock:/var/run/docker.sock:rw
+    environment:
+    - TZ=America/Mexico_City
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:1337/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+networks:
+  infra-net:
+    external: true

@@ -1,0 +1,47 @@
+services:
+  backup:
+    image: docker-backup:latest
+    container_name: docker-backup
+    restart: unless-stopped
+    cap_add:
+    - SYS_ADMIN
+    - DAC_READ_SEARCH
+    networks:
+    - infra-net
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - <host-path>
+    - <host-path>
+    - <host-path>
+    - /Media:/Media:ro
+    - <host-path>
+    - /etc:/host-etc:ro
+    - <host-credential-path>:<host-credential-path>:ro
+    - <host-path>
+    - desktop:/mnt/desktop
+    environment:
+    - BORG_REPO=/backup
+    - BORG_PASSPHRASE=${BORG_PASSPHRASE}
+    - RADARR_API_KEY=${RADARR_API_KEY}
+    - RADARR_URL=http://radarr:7878
+    - SONARR_API_KEY=${SONARR_API_KEY}
+    - SONARR_URL=http://sonarr:8989
+    - RARE_TAG=rare
+    - PG_CONTAINERS=general-db
+    - TZ=America/Mexico_City
+    - DESKTOP_SHARE=//192.168.0.0/Sites
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 3
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+networks:
+  infra-net:
+    external: true
+volumes:
+  desktop:

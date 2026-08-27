@@ -1,0 +1,60 @@
+services:
+  woodpecker-server:
+    image: woodpeckerci/woodpecker-server:v3
+    container_name: woodpecker-server
+    restart: unless-stopped
+    networks:
+    - infra-net
+    ports:
+    - 8001:8000
+    volumes:
+    - <host-path>
+    environment:
+    - WOODPECKER_OPEN=true
+    - WOODPECKER_HOST=http://192.168.0.0:8001
+    - WOODPECKER_AGENT_SECRET=${WOODPECKER_AGENT_SECRET}
+    - WOODPECKER_ADMIN=opencode
+    - WOODPECKER_DATABASE_DATAFILE=/var/lib/woodpecker/woodpecker.sqlite
+    - WOODPECKER_GITHUB=true
+    - WOODPECKER_GITHUB_CLIENT=temp-client-id
+    - WOODPECKER_GITHUB_SECRET=${WOODPECKER_GITHUB_SECRET}
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '1.0'
+    logging: &id001
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider http://localhost:8001/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+  woodpecker-agent:
+    image: woodpeckerci/woodpecker-agent:v3
+    container_name: woodpecker-agent
+    restart: unless-stopped
+    depends_on:
+    - woodpecker-server
+    networks:
+    - infra-net
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+    - WOODPECKER_SERVER=woodpecker-server:9000
+    - WOODPECKER_AGENT_SECRET=${WOODPECKER_AGENT_SECRET}
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '1.0'
+    logging: *id001
+networks:
+  infra-net:
+    external: true

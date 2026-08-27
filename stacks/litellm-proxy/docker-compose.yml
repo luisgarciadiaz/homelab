@@ -1,0 +1,36 @@
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm-proxy
+    restart: unless-stopped
+    networks:
+    - infra-net
+    ports:
+    - 4000:4000
+    volumes:
+    - <host-path>
+    environment:
+    - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    - GEMINI_API_KEY=${GEMINI_API_KEY}
+    - DATABASE_URL=postgresql://postgres:${LITELLM_DB_PASSWORD}@general-db:5432/litellm
+    - LITELLM_LOG=DEBUG
+    command:
+    - --config
+    - /app/config.yaml
+    - --port
+    - "4000"
+    - --host
+    - "0.0.0.0"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 3
+networks:
+  infra-net:
+    external: true

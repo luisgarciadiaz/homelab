@@ -1,0 +1,91 @@
+services:
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+    network_mode: host
+    pid: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.25'
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.2
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true
+    networks:
+      - infra-net
+    command:
+      - '-logtostderr'
+      - '--port=8080'
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+
+  postgres_exporter_general:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres_exporter_general
+    restart: unless-stopped
+    networks:
+      - infra-net
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@general-db:5432/postgres?sslmode=disable"
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.1'
+
+  postgres_exporter_vortexy:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres_exporter_vortexy
+    restart: unless-stopped
+    networks:
+      - infra-net
+      - postgrest_default
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:${VORTEXY_DB_PASSWORD}@vortexy_db:5432/vortexy?sslmode=disable"
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.1'
+
+  blackbox_exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox_exporter
+    restart: unless-stopped
+    networks:
+      - infra-net
+    ports:
+      - "9115:9115"
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.1'
+
+networks:
+  infra-net:
+    external: true
+  postgrest_default:
+    external: true
